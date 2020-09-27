@@ -11,16 +11,7 @@ import java.util.*
  * @constructor takes number of frames as a parameter and
  * constructs cache with that number of free frames
  */
-class FIFO(val numOfFrames: Int) : Cache {
-    init {
-        if (numOfFrames <= 0)
-            throw IllegalArgumentException("Number of frames must be positive.")
-    }
-
-    override fun findFrameStoringPage(page: Page): Frame? {
-        return pagesToFramesMap[page]
-    }
-
+class FIFO(numOfFrames: Int) : BasicCache(numOfFrames) {
     override fun seekAnyFrame(): Frame {
         return if (freeFramesQueue.isNotEmpty())
             freeFramesQueue.element()
@@ -28,15 +19,7 @@ class FIFO(val numOfFrames: Int) : Cache {
             usedFramesQueue.element()
     }
 
-    override fun putPageIntoFrame(page: Page?, frameIndex: Int) {
-        if (pagesToFramesMap[page] != null)
-            throw IllegalAccessException("The page is already stored inside one of the frames.")
-
-        removeOldFrame(frameIndex)
-        putUpdatedFrame(page, frameIndex)
-    }
-
-    private fun removeOldFrame(frameIndex: Int) {
+    override fun removeOldFrame(frameIndex: Int) {
         val frame = frames[frameIndex]
         if (frame.storedPage != null) {
             pagesToFramesMap.remove(frame.storedPage)
@@ -46,7 +29,7 @@ class FIFO(val numOfFrames: Int) : Cache {
         }
     }
 
-    private fun putUpdatedFrame(page: Page?, frameIndex: Int) {
+    override fun putUpdatedFrame(page: Page?, frameIndex: Int) {
         val newFrame = Frame(frameIndex, storedPage = page)
         frames[frameIndex] = newFrame
         if (page != null) {
@@ -60,7 +43,7 @@ class FIFO(val numOfFrames: Int) : Cache {
     private val frames = Array(numOfFrames) { index ->
         Frame(index, storedPage = null)
     }
-    private val pagesToFramesMap: MutableMap<Page, Frame> = mutableMapOf()
+
     private val freeFramesQueue: Queue<Frame> = LinkedList()
     private val usedFramesQueue: Queue<Frame> = LinkedList()
 

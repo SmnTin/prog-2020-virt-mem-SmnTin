@@ -1,5 +1,7 @@
 package ru.emkn.virtualmemory.algorithms
 
+import java.lang.IllegalArgumentException
+
 data class Page(val index: Int)
 
 data class Frame(
@@ -57,4 +59,38 @@ interface Cache {
      * its fields would affect structures inside the Cache.
      */
     fun putPageIntoFrame(page: Page?, frameIndex: Int)
+}
+
+/**
+ * Some common behaviour on page access in map.
+ * Even though access behaviour is provided you
+ * still to update the structures!
+ * @constructor checks that [numOfFrames] is positive
+ * otherwise throws [IllegalArgumentException]
+ * @see Cache
+ */
+abstract class BasicCache(val numOfFrames: Int) : Cache {
+    init {
+        if (numOfFrames <= 0)
+            throw IllegalArgumentException("Number of frames must be positive.")
+    }
+
+    override fun findFrameStoringPage(page: Page): Frame? {
+        return pagesToFramesMap[page]
+    }
+
+    override fun putPageIntoFrame(page: Page?, frameIndex: Int) {
+        if (pagesToFramesMap[page] != null)
+            throw IllegalAccessException("The page is already stored inside one of the frames.")
+
+        removeOldFrame(frameIndex)
+        putUpdatedFrame(page, frameIndex)
+    }
+
+    protected val pagesToFramesMap: MutableMap<Page, Frame> = mutableMapOf()
+
+    protected abstract fun removeOldFrame(frameIndex: Int)
+
+    protected abstract fun putUpdatedFrame(page: Page?, frameIndex: Int)
+
 }

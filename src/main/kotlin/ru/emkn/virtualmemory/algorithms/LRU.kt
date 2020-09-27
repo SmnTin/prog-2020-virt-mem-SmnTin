@@ -11,38 +11,25 @@ import java.util.*
  * @constructor takes number of frames as a parameter and
  * constructs cache with that number of free frames
  */
-class LRU(val numOfFrames: Int) : Cache {
-    init {
-        if (numOfFrames <= 0)
-            throw IllegalArgumentException("Number of frames must be positive.")
-    }
-
+class LRU(numOfFrames: Int) : BasicCache(numOfFrames) {
     override fun findFrameStoringPage(page: Page): Frame? {
-        val frameWithInfo = pagesToFramesMap[page]
-        if (frameWithInfo != null)
-            frameWithInfo.lastUsed = ++usageCounter
-        return frameWithInfo?.frame
+        val frame = pagesToFramesMap[page]
+        if (frame != null)
+            framesWithInfo[frame.index].lastUsed = ++usageCounter
+        return frame
     }
 
     override fun seekAnyFrame(): Frame {
         return framesQueueSortedByUsage.peek()!!.frame
     }
 
-    override fun putPageIntoFrame(page: Page?, frameIndex: Int) {
-        if (pagesToFramesMap[page] != null)
-            throw IllegalAccessException("The page is already stored inside one of the frames.")
-
-        removeOldFrame(frameIndex)
-        putUpdatedFrameStoringPage(page, frameIndex)
-    }
-
-    private fun removeOldFrame(frameIndex: Int) {
+    override fun removeOldFrame(frameIndex: Int) {
         val frame = frames[frameIndex]
         pagesToFramesMap.remove(frame.storedPage)
         framesQueueSortedByUsage.remove(framesWithInfo[frameIndex])
     }
 
-    private fun putUpdatedFrameStoringPage(page: Page?, frameIndex: Int) {
+    override fun putUpdatedFrame(page: Page?, frameIndex: Int) {
         val newFrame = Frame(frameIndex, storedPage = page, modified = false)
         val newFrameWithInfo = FrameWithInfo(newFrame, lastUsed = ++usageCounter)
 
@@ -51,7 +38,7 @@ class LRU(val numOfFrames: Int) : Cache {
         framesQueueSortedByUsage.add(newFrameWithInfo)
 
         if (page != null)
-            pagesToFramesMap[page] = newFrameWithInfo
+            pagesToFramesMap[page] = newFrame
     }
 
     private data class FrameWithInfo(val frame: Frame, var lastUsed: Int)
@@ -65,8 +52,6 @@ class LRU(val numOfFrames: Int) : Cache {
     }
 
     private var usageCounter: Int = 0
-
-    private val pagesToFramesMap: MutableMap<Page, FrameWithInfo> = mutableMapOf()
 
     private val framesQueueSortedByUsage =
         PriorityQueue<FrameWithInfo>(

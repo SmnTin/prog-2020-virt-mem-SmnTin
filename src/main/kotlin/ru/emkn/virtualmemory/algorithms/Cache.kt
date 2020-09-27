@@ -10,13 +10,6 @@ data class Frame(
     val modified: Boolean = false
 )
 
-enum class OperationType {
-    Read,
-    Write
-}
-
-data class Query(val page: Page, val operationType: OperationType)
-
 /**
  * Cache algorithm to control the strategy of frames management
  */
@@ -47,8 +40,6 @@ interface Cache {
 
     /**
      * Puts [page] into frame with [frameIndex].
-     * Throws [IllegalAccessException] if [page] is already
-     * presented in the cache.
      *
      * @param page that would be stored in the frame.
      * Can be null, then the frame would store no page
@@ -57,6 +48,8 @@ interface Cache {
      * 1. it's the only value that matters;
      * 2. passing frame object can give an illusion that changing
      * its fields would affect structures inside the Cache.
+     * @throws IllegalAccessException if [page] is already
+     * presented in the cache.
      */
     fun putPageIntoFrame(page: Page?, frameIndex: Int)
 }
@@ -66,7 +59,7 @@ interface Cache {
  * Even though access behaviour is provided you
  * still to update the structures!
  * @constructor checks that [numOfFrames] is positive
- * otherwise throws [IllegalArgumentException]
+ * @throws IllegalArgumentException if [numOfFrames] is non-positive
  * @see Cache
  */
 abstract class BasicCache(val numOfFrames: Int) : Cache {

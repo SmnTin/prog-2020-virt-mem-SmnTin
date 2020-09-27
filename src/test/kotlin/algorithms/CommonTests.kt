@@ -11,6 +11,8 @@ import kotlin.test.assertNull
 
 import ru.emkn.virtualmemory.algorithms.LRU
 import ru.emkn.virtualmemory.algorithms.FIFO
+import ru.emkn.virtualmemory.algorithms.OPT
+
 import ru.emkn.virtualmemory.algorithms.Page
 import ru.emkn.virtualmemory.algorithms.Cache
 import java.lang.IllegalArgumentException
@@ -148,7 +150,8 @@ class CommonTests {
         @JvmStatic
         fun cacheFactories() = listOf(
             Arguments.of({ numOfFrames: Int -> LRU(numOfFrames) }),
-            Arguments.of({ numOfFrames: Int -> FIFO(numOfFrames) })
+            Arguments.of({ numOfFrames: Int -> FIFO(numOfFrames) }),
+            Arguments.of({ numOfFrames: Int -> OPT(numOfFrames) })
         )
     }
 }

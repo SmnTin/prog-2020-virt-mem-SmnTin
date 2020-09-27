@@ -18,7 +18,7 @@ data class Query(val page: Page, val operationType: OperationType)
 /**
  * Cache algorithm to control the strategy of frames management
  */
-interface ReplacementAlgorithm {
+interface Cache {
     /**
      * Looks for the [Frame] that stores the [page]
      * @param page The page that the search is done for
@@ -37,7 +37,7 @@ interface ReplacementAlgorithm {
      * sequentially in index increasing order until
      * the cache is full for the first time. After
      * that pages can be given in any order. That is
-     * done for data locality.
+     * done for better data locality.
      *
      * @return [Frame] chosen according to implementation-defined strategy
      */

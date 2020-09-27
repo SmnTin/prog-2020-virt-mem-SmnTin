@@ -11,7 +11,7 @@ import java.util.*
  * @constructor takes number of frames as a parameter and
  * constructs cache with that number of free frames
  */
-class LRU(val numOfFrames: Int) : ReplacementAlgorithm {
+class LRU(val numOfFrames: Int) : Cache {
     init {
         if (numOfFrames <= 0)
             throw IllegalArgumentException("Number of frames must be positive.")
@@ -32,17 +32,17 @@ class LRU(val numOfFrames: Int) : ReplacementAlgorithm {
         if (pagesToFramesMap[page] != null)
             throw IllegalAccessException("The page is already stored inside one of the frames.")
 
-        removeFrameFromStructures(frameIndex)
-        putUpdatedFrameStoringPage(frameIndex, page)
+        removeOldFrame(frameIndex)
+        putUpdatedFrameStoringPage(page, frameIndex)
     }
 
-    private fun removeFrameFromStructures(frameIndex: Int) {
+    private fun removeOldFrame(frameIndex: Int) {
         val frame = frames[frameIndex]
         pagesToFramesMap.remove(frame.storedPage)
         framesQueueSortedByUsage.remove(framesWithInfo[frameIndex])
     }
 
-    private fun putUpdatedFrameStoringPage(frameIndex: Int, page: Page?) {
+    private fun putUpdatedFrameStoringPage(page: Page?, frameIndex: Int) {
         val newFrame = Frame(frameIndex, storedPage = page, modified = false)
         val newFrameWithInfo = FrameWithInfo(newFrame, lastUsed = ++usageCounter)
 
@@ -81,9 +81,4 @@ class LRU(val numOfFrames: Int) : ReplacementAlgorithm {
             framesQueueSortedByUsage.add(frame)
     }
 }
-
-// Returns number of queries that led to page unloading
-//fun analyzeLRU(queries: List<Query>): List<Boolean> {
-//
-//}
 

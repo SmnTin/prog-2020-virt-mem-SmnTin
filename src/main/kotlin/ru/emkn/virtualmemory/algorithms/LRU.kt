@@ -3,6 +3,14 @@ package ru.emkn.virtualmemory.algorithms
 import java.lang.IllegalArgumentException
 import java.util.*
 
+/**
+ * Replacement algorithm implementing the LRU strategy
+ * for pages seeking. When table is full the least recently
+ * used frame is given otherwise one of the free frames is
+ * given.
+ * @constructor takes number of frames as a parameter and
+ * constructs cache with that number of free frames
+ */
 class LRU(val numOfFrames: Int) : ReplacementAlgorithm {
     init {
         if (numOfFrames <= 0)
@@ -31,7 +39,7 @@ class LRU(val numOfFrames: Int) : ReplacementAlgorithm {
     private fun removeFrameFromStructures(frameIndex: Int) {
         val frame = frames[frameIndex]
         pagesToFramesMap.remove(frame.storedPage)
-        framesQueueSortedByUsage.remove(framesWithInfo[frame.index])
+        framesQueueSortedByUsage.remove(framesWithInfo[frameIndex])
     }
 
     private fun putUpdatedFrameStoringPage(frameIndex: Int, page: Page?) {

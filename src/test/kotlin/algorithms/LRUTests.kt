@@ -145,4 +145,26 @@ class LRUTests {
             }
         }
     }
+
+    @Test
+    fun `test frame freeing`() {
+        val numOfFrames = 2
+        val numOfPages = 3
+        val cache = LRU(numOfFrames)
+
+        val pages = List(numOfPages) { index ->
+            Page(index)
+        }
+
+        cache.putPageIntoFrame(pages[0], cache.seekAnyFrame().index)
+        cache.putPageIntoFrame(pages[1], cache.seekAnyFrame().index)
+
+        val frame1 = cache.seekAnyFrame()
+        // However, this frame was accessed last, it was freed so it
+        // should be given first.
+        cache.putPageIntoFrame(null, cache.seekAnyFrame().index)
+        val frame2 = cache.seekAnyFrame()
+
+        assertEquals(frame1.index, frame2.index)
+    }
 }

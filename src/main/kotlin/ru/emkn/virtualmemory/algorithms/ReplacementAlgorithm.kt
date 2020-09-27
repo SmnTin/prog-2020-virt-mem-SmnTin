@@ -34,7 +34,10 @@ interface ReplacementAlgorithm {
      * The strategy is implementation-defined.
      * Example implementations are LRU and FIFO.
      * It's guaranteed that free pages are given
-     * sequentially in index increasing order.
+     * sequentially in index increasing order until
+     * the cache is full for the first time. After
+     * that pages can be given in any order. That is
+     * done for data locality.
      *
      * @return [Frame] chosen according to implementation-defined strategy
      */

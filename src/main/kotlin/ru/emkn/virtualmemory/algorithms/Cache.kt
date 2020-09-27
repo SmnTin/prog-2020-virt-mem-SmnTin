@@ -34,7 +34,7 @@ interface Cache {
      * is supposed to be freed and reused by another page
      * later.
      * The strategy is implementation-defined.
-     * Example implementations are LRU and FIFO.
+     * Example implementations are [LRU] and [FIFO].
      * It's guaranteed that free pages are given
      * sequentially in index increasing order until
      * the cache is full for the first time. After

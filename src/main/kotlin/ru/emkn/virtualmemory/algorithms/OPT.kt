@@ -7,6 +7,9 @@ import java.util.*
  * would be asked to store. It is not implementable in
  * practice. But can be useful in theory to evaluate
  * efficiency of other algorithms.
+ *
+ * This implementation has all the guarantees that were
+ * defined for the [Cache] interface.
  */
 class OPT(numOfFrames: Int, queries: List<Page> = emptyList()) : BasicCache(numOfFrames) {
     override fun seekAnyFrame(): Frame {

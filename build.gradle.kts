@@ -11,12 +11,15 @@ version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
+    maven(url = "https://kotlin.bintray.com/kotlinx")
 }
 
 dependencies {
     val junitVersion = "5.6.2"
 
     implementation(kotlin("stdlib"))
+
+    implementation("org.jetbrains.kotlinx:kotlinx-cli:0.3")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-params:$junitVersion")

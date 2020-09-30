@@ -48,7 +48,7 @@ class GeneratorMode : Subcommand(
     private fun writeResultToFile(result: List<Page>) {
         val outputFile = File(outputFileName)
 
-        outputFile.writeText(result.joinToString(separator = " ") { page -> page.index.toString() })
+        outputFile.writeText(result.joinToString(separator = " ") { page -> page.index.toString() } + "\n")
     }
 
     private fun generateResult(): List<Page> {

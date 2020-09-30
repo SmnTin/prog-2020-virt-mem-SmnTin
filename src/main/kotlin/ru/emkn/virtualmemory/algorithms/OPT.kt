@@ -12,6 +12,8 @@ import java.util.*
  * defined for the [Cache] interface.
  */
 class OPT(numOfFrames: Int, queries: List<Page> = emptyList()) : BasicCache(numOfFrames) {
+    override val name = "OPT"
+
     override fun seekAnyFrame(): Frame {
         return if (freeFrames.isEmpty()) {
             val leastUsedPage: Page? = if (queueOfPagesWithInfo.isNotEmpty())

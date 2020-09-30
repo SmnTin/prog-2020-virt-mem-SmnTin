@@ -12,6 +12,8 @@ import java.util.*
  * constructs cache with that number of free frames
  */
 class FIFO(numOfFrames: Int) : BasicCache(numOfFrames) {
+    override val name = "FIFO"
+
     override fun seekAnyFrame(): Frame {
         return if (freeFramesQueue.isNotEmpty())
             freeFramesQueue.element()

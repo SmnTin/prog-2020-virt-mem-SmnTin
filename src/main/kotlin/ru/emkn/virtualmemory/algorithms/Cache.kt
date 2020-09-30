@@ -15,6 +15,10 @@ data class Frame(
  */
 interface Cache {
     /**
+     * Used to form user-friendly print outputs.
+     */
+    val name: String
+    /**
      * Looks for the [Frame] that stores the [page]
      * @param page The page that the search is done for
      * @return [Frame] that stores the [page]

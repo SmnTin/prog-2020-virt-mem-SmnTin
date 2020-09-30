@@ -12,6 +12,8 @@ import java.util.*
  * constructs cache with that number of free frames
  */
 class LRU(numOfFrames: Int) : BasicCache(numOfFrames) {
+    override val name = "LRU"
+
     override fun findFrameStoringPage(page: Page): Frame? {
         val frame = pagesToFramesMap[page]
         if (frame != null)

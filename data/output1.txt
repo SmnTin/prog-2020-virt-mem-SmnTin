@@ -1,0 +1,3 @@
+LRU 44
+OPT 44
+FIFO 42

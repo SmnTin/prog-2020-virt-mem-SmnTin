@@ -46,6 +46,8 @@ class OPT(numOfFrames: Int, queries: List<Page> = emptyList()) : BasicCache(numO
         } else {
             freeFrames.add(newFrame)
         }
+
+        frames[frameIndex] = newFrame
     }
 
     private fun decrementPageUsageCounter(page: Page) {

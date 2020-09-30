@@ -146,6 +146,28 @@ class CommonTests {
         assertEquals(frame1.index, frame2.index)
     }
 
+    @ParameterizedTest
+    @MethodSource("cacheFactories")
+    fun `test page search after frame freeing`(cacheFactory: (Int) -> Cache) {
+        val numOfFrames = 5
+        val numOfPages = 100
+
+        val pages = List(numOfPages) { index ->
+            Page(index)
+        }.shuffled()
+
+        val cache = cacheFactory(numOfFrames)
+
+        for (page in pages) {
+            if (cache.findFrameStoringPage(page) == null) {
+                val frame = cache.seekAnyFrame()
+                cache.putPageIntoFrame(page, frame.index)
+                if (frame.storedPage != null)
+                    assertNull(cache.findFrameStoringPage(frame.storedPage!!))
+            }
+        }
+    }
+
     companion object {
         @JvmStatic
         fun cacheFactories() = listOf(

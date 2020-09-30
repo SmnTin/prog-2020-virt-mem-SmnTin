@@ -51,8 +51,10 @@ class OPT(numOfFrames: Int, queries: List<Page> = emptyList()) : BasicCache(numO
     }
 
     private fun decrementPageUsageCounter(page: Page) {
-        if (page in pagesToUsageCounterMap)
-            queueOfPagesWithInfo.remove(PageWithInfo(page, pagesToUsageCounterMap[page]!!))
+        if (page in pagesToUsageCounterMap) {
+            val toRemove = PageWithInfo(page, pagesToUsageCounterMap[page]!!)
+            queueOfPagesWithInfo.remove(toRemove)
+        }
 
         val updatedUsageCounter = pagesToUsageCounterMap.getOrDefault(page, 0) - 1
         pagesToUsageCounterMap[page] = updatedUsageCounter
@@ -79,7 +81,7 @@ class OPT(numOfFrames: Int, queries: List<Page> = emptyList()) : BasicCache(numO
     init {
         for (page in queries)
             pagesToUsageCounterMap.merge(page, 1, Int::plus)
-        for (page in queries)
-            queueOfPagesWithInfo.add(PageWithInfo(page, pagesToUsageCounterMap[page]!!))
+        for ((page, counter) in pagesToUsageCounterMap)
+            queueOfPagesWithInfo.add(PageWithInfo(page, counter))
     }
 }

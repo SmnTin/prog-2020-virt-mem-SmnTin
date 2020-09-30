@@ -15,22 +15,26 @@ class OPTTests {
     @Test
     fun `test basic LRU behaviour`() {
         val numOfFrames = 3
-        val numOfPages = 3
+        val numOfPages = 4
 
         val pages = List(numOfPages) { index ->
             Page(index)
         }
 
-        val queries = listOf(0, 0, 1, 2, 2, 2)
+        val queries = listOf(0, 1, 2, 3, 0, 1, 2, 2, 2, 0, 3, 3, 3, 3, 3)
             .shuffled()
             .map { id ->
                 pages[id]
             }
 
         val cache = OPT(numOfFrames, queries)
-        for (page in pages)
-            cache.putPageIntoFrame(page, cache.seekAnyFrame().index)
 
+        pages.take(3).forEach { page ->
+            cache.putPageIntoFrame(page, cache.seekAnyFrame().index)
+        }
         assertEquals(pages[1], cache.seekAnyFrame().storedPage)
+        cache.putPageIntoFrame(pages[3], cache.seekAnyFrame().index)
+
+        assertEquals(pages[0], cache.seekAnyFrame().storedPage)
     }
 }

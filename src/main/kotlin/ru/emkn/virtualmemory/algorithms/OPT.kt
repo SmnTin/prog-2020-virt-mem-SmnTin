@@ -14,22 +14,31 @@ import java.util.*
 class OPT(numOfFrames: Int, queries: List<Page> = emptyList()) : BasicCache(numOfFrames) {
     override val name = "OPT"
 
+    override fun findFrameStoringPage(page: Page): Frame? {
+        val frame = super.findFrameStoringPage(page)
+        if (frame != null) {
+            val newFrameWithInfo = FrameWithInfo(frame, nextUsage = pollNewPageUsage(page))
+            usedFrames.remove(framesWithInfo[frame.index])
+            usedFrames.add(newFrameWithInfo)
+            framesWithInfo[frame.index] = newFrameWithInfo
+        }
+        return frame
+    }
+
     override fun seekAnyFrame(): Frame {
         return if (freeFrames.isEmpty()) {
-            val leastUsedPage: Page? = if (queueOfPagesWithInfo.isNotEmpty())
-                queueOfPagesWithInfo.peek().page
-            else
-                null
-            pagesToFramesMap[leastUsedPage] ?: usedFrames.first()
+            usedFrames.first().frame
         } else {
-            freeFrames.peek()
+            freeFrames.first()
         }
     }
 
     override fun removeOldFrame(frameIndex: Int) {
         val frame = frames[frameIndex]
+        val frameWithInfo = framesWithInfo[frameIndex]
+
         if (frame.storedPage != null) {
-            usedFrames.remove(frame)
+            usedFrames.remove(frameWithInfo)
             pagesToFramesMap.remove(frame.storedPage)
         } else {
             freeFrames.remove(frame)
@@ -38,36 +47,36 @@ class OPT(numOfFrames: Int, queries: List<Page> = emptyList()) : BasicCache(numO
 
     override fun putUpdatedFrame(page: Page?, frameIndex: Int) {
         val newFrame = Frame(frameIndex, storedPage = page)
+        val newFrameWithInfo = FrameWithInfo(newFrame, pollNewPageUsage(page))
 
         if (page != null) {
-            decrementPageUsageCounter(page)
-            usedFrames.add(newFrame)
+            usedFrames.add(newFrameWithInfo)
             pagesToFramesMap[page] = newFrame
         } else {
             freeFrames.add(newFrame)
         }
 
         frames[frameIndex] = newFrame
+        framesWithInfo[frameIndex] = newFrameWithInfo
     }
 
-    private fun decrementPageUsageCounter(page: Page) {
-        if (page in pagesToUsageCounterMap)
-            queueOfPagesWithInfo.remove(PageWithInfo(page, pagesToUsageCounterMap[page]!!))
-
-        val updatedUsageCounter = pagesToUsageCounterMap.getOrDefault(page, 0) - 1
-        pagesToUsageCounterMap[page] = updatedUsageCounter
-        queueOfPagesWithInfo.add(PageWithInfo(page, updatedUsageCounter))
+    private fun pollNewPageUsage(page: Page?) : Int {
+        pagesToUsagesMap[page]?.poll()
+        return pagesToUsagesMap[page]?.peek() ?: Int.MAX_VALUE
     }
 
     private val frames = Array(numOfFrames) { index ->
         Frame(index, storedPage = null)
     }
-    private val freeFrames = PriorityQueue<Frame>(compareBy { it.index })
-    private val usedFrames: MutableSet<Frame> = mutableSetOf()
+    private val framesWithInfo = Array(numOfFrames) { index ->
+        FrameWithInfo(frames[index], nextUsage = Int.MAX_VALUE)
+    }
 
-    private data class PageWithInfo(val page: Page, val usageCounter: Int)
-    private val queueOfPagesWithInfo = PriorityQueue<PageWithInfo>(compareBy { it.usageCounter })
-    private val pagesToUsageCounterMap: MutableMap<Page, Int> = mutableMapOf()
+    private val freeFrames = TreeSet(compareBy(Frame::index))
+    private val usedFrames = TreeSet(compareByDescending(FrameWithInfo::nextUsage))
+
+    private data class FrameWithInfo(val frame: Frame, val nextUsage: Int)
+    private val pagesToUsagesMap : MutableMap<Page, Queue<Int>> = mutableMapOf()
 
     // fill freeFrames queue
     init {
@@ -77,9 +86,10 @@ class OPT(numOfFrames: Int, queries: List<Page> = emptyList()) : BasicCache(numO
 
     // fill structures with foreknown usage values
     init {
-        for (page in queries)
-            pagesToUsageCounterMap.merge(page, 1, Int::plus)
-        for (page in queries)
-            queueOfPagesWithInfo.add(PageWithInfo(page, pagesToUsageCounterMap[page]!!))
+        queries.forEachIndexed { index, page ->
+            if (pagesToUsagesMap[page] == null)
+                pagesToUsagesMap[page] = LinkedList()
+            pagesToUsagesMap[page]?.add(index)
+        }
     }
 }

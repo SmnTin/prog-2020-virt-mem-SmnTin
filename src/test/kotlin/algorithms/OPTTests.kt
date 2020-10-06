@@ -21,8 +21,7 @@ class OPTTests {
             Page(index)
         }
 
-        val queries = listOf(0, 0, 1, 2, 2, 2)
-            .shuffled()
+        val queries = listOf(0, 1, 2, 1, 0, 2, 2)
             .map { id ->
                 pages[id]
             }
@@ -31,6 +30,6 @@ class OPTTests {
         for (page in pages)
             cache.putPageIntoFrame(page, cache.seekAnyFrame().index)
 
-        assertEquals(pages[1], cache.seekAnyFrame().storedPage)
+        assertEquals(pages[2], cache.seekAnyFrame().storedPage)
     }
 }

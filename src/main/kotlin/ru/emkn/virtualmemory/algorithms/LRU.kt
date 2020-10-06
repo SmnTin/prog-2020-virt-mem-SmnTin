@@ -22,7 +22,7 @@ class LRU(numOfFrames: Int) : BasicCache(numOfFrames) {
     }
 
     override fun seekAnyFrame(): Frame {
-        return framesQueueSortedByUsage.peek()!!.frame
+        return framesQueueSortedByUsage.first()!!.frame
     }
 
     override fun removeOldFrame(frameIndex: Int) {
@@ -56,7 +56,7 @@ class LRU(numOfFrames: Int) : BasicCache(numOfFrames) {
     private var usageCounter: Int = 0
 
     private val framesQueueSortedByUsage =
-        PriorityQueue<FrameWithInfo>(
+        TreeSet<FrameWithInfo>(
             compareBy(
                 { it.frame.storedPage != null },
                 { it.lastUsed }, { it.frame.index }

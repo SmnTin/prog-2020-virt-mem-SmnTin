@@ -57,7 +57,3 @@ val runJar by tasks.creating(Exec::class) {
     val evalArgs = listOf("java", "-jar", jarFile.absolutePath) + argvString.split(" ")
     commandLine(*evalArgs.toTypedArray())
 }
-
-//tasks.compileJava {
-//    dependsOn(tasks.jar)
-//}

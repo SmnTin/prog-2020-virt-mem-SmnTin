@@ -8,6 +8,17 @@ data class AnalysisResult(
     val wasFrameFreedPerQuery: List<Boolean>
 )
 
+/**
+ * Analyzes given [cache] by feeding it
+ * with a given sequence of [pages] queries.
+ * The analyzed criteria is the number of
+ * queries that led to freeing of occupied
+ * frame and/or loading a requested page into it
+ *
+ * @param cache Instance of analyzed cache
+ * @param pages Sequence of queries to run on
+ * @return The result of analysis
+ */
 fun analyzeConcreteCache(cache: Cache, pages: List<Page>) : AnalysisResult {
     val wasFrameFreedPerQuery = pages.map { page ->
         val found = cache.findFrameStoringPage(page)

@@ -34,6 +34,11 @@ fun analyzeConcreteCache(cache: Cache, pages: List<Page>) : AnalysisResult {
     return AnalysisResult(cache, numOfFreedFrames, wasFrameFreedPerQuery)
 }
 
+/**
+ * Creates instances of all the implemented caches
+ * with a given number of frames and analyzes each
+ * on a given sequence of pages.
+ */
 fun analyzeAllCaches(numOfFrames: Int, pages: List<Page>) : List<AnalysisResult> {
     val caches = listOf<Cache>(
         LRU(numOfFrames),

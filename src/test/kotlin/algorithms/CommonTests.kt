@@ -177,8 +177,7 @@ class CommonTests {
     }
 
     companion object {
-        @JvmStatic
-        fun cacheFactories(): List<Arguments> {
+        private val lazyCacheFactories by lazy {
             val reflections = Reflections(
                 ConfigurationBuilder()
                     .setUrls(ClasspathHelper.forPackage("algorithms"))
@@ -186,7 +185,7 @@ class CommonTests {
             )
             val annotated: Set<Method> = reflections.getMethodsAnnotatedWith(CacheFactory::class.java)
 
-            return annotated.toList()
+            annotated.toList()
                 .filter { method -> Modifier.isStatic(method.modifiers) }
                 .map { method ->
                     Arguments.of({ numOfFrames: Int ->
@@ -194,6 +193,11 @@ class CommonTests {
                         method.invoke(null, numOfFrames) as Cache
                     })
                 }
+        }
+
+        @JvmStatic
+        fun cacheFactories(): List<Arguments> {
+            return lazyCacheFactories
         }
     }
 }

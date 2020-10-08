@@ -32,4 +32,11 @@ class OPTTests {
 
         assertEquals(pages[2], cache.seekAnyFrame().storedPage)
     }
+
+    companion object {
+        @CacheFactory
+        @JvmStatic
+        fun factoryForOPT(numOfFrames: Int) : OPT =
+            OPT(numOfFrames)
+    }
 }

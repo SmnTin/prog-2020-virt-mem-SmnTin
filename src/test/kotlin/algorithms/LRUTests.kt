@@ -9,6 +9,7 @@ import kotlin.test.assertFailsWith
 import kotlin.test.assertNull
 
 import ru.emkn.virtualmemory.algorithms.LRU
+import ru.emkn.virtualmemory.algorithms.OPT
 import ru.emkn.virtualmemory.algorithms.Page
 
 class LRUTests {
@@ -42,5 +43,12 @@ class LRUTests {
         assertEquals(frame1.index, frame0.index)
 
         cache.putPageIntoFrame(pages[0], frame0.index)
+    }
+
+    companion object {
+        @CacheFactory
+        @JvmStatic
+        fun factoryForLRU(numOfFrames: Int) : LRU =
+            LRU(numOfFrames)
     }
 }

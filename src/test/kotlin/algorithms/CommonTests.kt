@@ -17,14 +17,22 @@ import ru.emkn.virtualmemory.algorithms.Page
 import ru.emkn.virtualmemory.algorithms.Cache
 import java.lang.IllegalArgumentException
 
+import org.reflections.*
+import org.reflections.scanners.MethodAnnotationsScanner
+import org.reflections.util.ClasspathHelper
+import org.reflections.util.ConfigurationBuilder
+import java.lang.reflect.Method
+import java.lang.reflect.Modifier
+import kotlin.test.assertFails
+
 class CommonTests {
     @ParameterizedTest
     @MethodSource("cacheFactories")
     fun `throws on non-positive number of frames`(cacheFactory: (Int) -> Cache) {
-        assertFailsWith<IllegalArgumentException> {
+        assertFails {
             cacheFactory(-10)
         }
-        assertFailsWith<IllegalArgumentException> {
+        assertFails {
             cacheFactory(0)
         }
     }
@@ -170,10 +178,25 @@ class CommonTests {
 
     companion object {
         @JvmStatic
-        fun cacheFactories() = listOf(
-            Arguments.of({ numOfFrames: Int -> LRU(numOfFrames) }),
-            Arguments.of({ numOfFrames: Int -> FIFO(numOfFrames) }),
-            Arguments.of({ numOfFrames: Int -> OPT(numOfFrames) })
-        )
+        fun cacheFactories(): List<Arguments> {
+            val reflections = Reflections(
+                ConfigurationBuilder()
+                    .setUrls(ClasspathHelper.forPackage("algorithms"))
+                    .setScanners(MethodAnnotationsScanner())
+            )
+            val annotated: Set<Method> = reflections.getMethodsAnnotatedWith(CacheFactory::class.java)
+
+            return annotated.toList()
+                .filter { method -> Modifier.isStatic(method.modifiers) }
+                .map { method ->
+                    Arguments.of({ numOfFrames: Int ->
+//                        LRU(numOfFrames) as Cache
+                        method.invoke(null, numOfFrames) as Cache
+                    })
+                }
+        }
     }
 }
+
+@Target(AnnotationTarget.FUNCTION)
+annotation class CacheFactory

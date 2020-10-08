@@ -21,6 +21,7 @@ dependencies {
 
     implementation("org.jetbrains.kotlinx:kotlinx-cli:0.3")
 
+    testImplementation("org.reflections:reflections:0.9.12")
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-params:$junitVersion")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitVersion")

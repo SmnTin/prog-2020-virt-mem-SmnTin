@@ -9,6 +9,7 @@ import kotlin.test.assertFailsWith
 import kotlin.test.assertNull
 
 import ru.emkn.virtualmemory.algorithms.FIFO
+import ru.emkn.virtualmemory.algorithms.OPT
 import ru.emkn.virtualmemory.algorithms.Page
 
 class FIFOTests {
@@ -40,5 +41,12 @@ class FIFOTests {
         val frame3 = cache.seekAnyFrame()
         assertEquals(frame1.index, frame3.index)
         cache.putPageIntoFrame(pages[21], frame3.index)
+    }
+
+    companion object {
+        @CacheFactory
+        @JvmStatic
+        fun factoryForFIFO(numOfFrames: Int) : FIFO =
+            FIFO(numOfFrames)
     }
 }

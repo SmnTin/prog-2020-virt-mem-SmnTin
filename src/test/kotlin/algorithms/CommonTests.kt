@@ -189,7 +189,6 @@ class CommonTests {
                 .filter { method -> Modifier.isStatic(method.modifiers) }
                 .map { method ->
                     Arguments.of({ numOfFrames: Int ->
-//                        LRU(numOfFrames) as Cache
                         method.invoke(null, numOfFrames) as Cache
                     })
                 }

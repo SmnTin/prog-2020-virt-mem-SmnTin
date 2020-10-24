@@ -4,10 +4,12 @@ language:
 jdk:
   - oraclejdk8
 
+os:
+  linux
+
+dist: trusty
+
 install: skip
 
 script:
   ./gradlew shadowJar
-
-os:
-  linux

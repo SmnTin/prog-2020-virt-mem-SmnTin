@@ -15,4 +15,4 @@ script:
   ./gradlew shadowJar
 
 after_script:
-  ./gradlew check
+  ./gradlew test

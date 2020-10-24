@@ -1,6 +1,6 @@
 # Проект «Алгоритмы управления виртуальной памятью»
 
-[![Build Status](https://travis-ci.org/SmnTin/prog-2020-virt-mem-SmnTin.png?branch=master)](https://travis-ci.org/SmnTin/prog-2020-virt-mem-SmnTin)
+[![Build Status](https://travis-ci.org/SmnTin/prog-2020-virt-mem-SmnTin.png?branch=master)](https://travis-ci.com/github/SmnTin/prog-2020-virt-mem-SmnTin)
 
 ## Описание предметной области
 

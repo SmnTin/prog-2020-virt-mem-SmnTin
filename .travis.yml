@@ -13,3 +13,6 @@ install: skip
 
 script:
   ./gradlew shadowJar
+
+after_script:
+  ./gradlew check
